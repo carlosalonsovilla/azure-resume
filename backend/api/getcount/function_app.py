@@ -2,11 +2,12 @@ import logging
 import azure.functions as func
 from azure.cosmos import CosmosClient
 import json
+import os
 
-COSMOS_DB_ENDPOINT = ''
-COSMOS_DB_KEY = ''
-DATABASE_NAME = ''
-CONTAINER_NAME = ''
+COSMOS_DB_ENDPOINT = os.getenv('COSMOS_DB_ENDPOINT')
+COSMOS_DB_KEY = os.getenv('COSMOS_DB_KEY')
+DATABASE_NAME = os.getenv('DATABASE_NAME')
+CONTAINER_NAME = os.getenv('CONTAINER_NAME')
 
 
 app = func.FunctionApp()

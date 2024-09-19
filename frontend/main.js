@@ -7,8 +7,7 @@ async function updateCounter() {
         if (response.ok) {
             const data = await response.json(); // Parse the JSON response
             
-            // Assuming your Azure function returns an object like { count: 123 }
-            const counterValue = data.count; // Ensure 'count' is the correct field
+            const counterValue = data.count;
 
             // Update the HTML element with id "counter"
             document.getElementById('counter').textContent = counterValue;
@@ -20,5 +19,5 @@ async function updateCounter() {
     }
 }
 
-// Call the function when the page loads
+
 window.onload = updateCounter;
