@@ -25,3 +25,8 @@ deployment.zip
 
 # Ignore log files
 *.log
+
+node_modules/
+
+# Ignore Virtual Environment for testing
+test/test_env
