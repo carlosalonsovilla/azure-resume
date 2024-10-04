@@ -30,3 +30,7 @@ node_modules/
 
 # Ignore Virtual Environment for testing
 tests/test_venv
+
+# Ignore Environment Variables for testing backend
+tests/.env
+

@@ -1,11 +1,19 @@
 import unittest
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 class TestBackendAPI(unittest.TestCase):
 
     def test_get_count(self):
+
+        api_url = os.getenv('API_URL')
+
         # Call API
-        response = requests.get('http://localhost:7071/api/getcount')
+        response = requests.get(api_url)
 
         # Check if the response is 200
         self.assertEqual(response.status_code, 200, "API did not return a 200 status code.")
