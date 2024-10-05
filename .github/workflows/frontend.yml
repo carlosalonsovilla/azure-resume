@@ -1,38 +1,43 @@
-name: Deploy Frontend to Azure
+name: Deploy frontend
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # Login to Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy storage account and static website
-        uses: azure/arm-deploy@v1
-        with:
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resourceGroupName: my-resume-rg
-          template: ./arm-templates/storage-frontend.json
-          parameters: |
-            storageAccountName=${{ secrets.STORAGE_ACCOUNT_NAME }}
+    - name: Set Azure Subscription
+      run: az account set --subscription "ad371c01-d420-4b1f-86fd-c480faf24f3d" 
 
-      - name: Install Azure CLI
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    - name: Debug environment variables
+      run: |
+        echo "CDN Profile: my-resume-cdn"
+        echo "CDN Endpoint: cavcdn"
+        echo "Resource Group: my-resume-rg"
 
-      - name: Purge CDN endpoint
-        run: |
-          az cdn endpoint purge -g my-resume-rg \
-          --profile-name ${{ secrets.CDN_PROFILE_NAME }} \
-          --name ${{ secrets.CDN_ENDPOINT_NAME }} \
-          --content-paths '/*'
+    
+    - name: Upload to blob storage
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az storage blob upload-batch --account-name cavresumeweb -d '$web' -s frontend/
+
+    - name: Purge CDN endpoint
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az cdn endpoint purge --content-paths "/*" --profile-name "my-resume-cdn" --name "cavcdn" --resource-group "my-resume-rg"
+
+    - name: logout
+      run: |
+        az logout
+      if: always()

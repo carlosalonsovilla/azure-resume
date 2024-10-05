@@ -41,7 +41,7 @@
       "name": "[parameters('cdnProfileName')]",
       "location": "Global",
       "sku": {
-        "name": "Standard_Verizon" // Changed to reflect CDN Classic
+        "name": "Standard_Verizon" 
       }
     },
     {
