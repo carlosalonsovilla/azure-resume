@@ -1,10 +1,10 @@
 {
-    "azureFunctions.deploySubpath": "backend/api/getcount",
+    "azureFunctions.deploySubpath": "backend/api/",
     "azureFunctions.scmDoBuildDuringDeployment": true,
     "azureFunctions.pythonVenv": ".venv",
     "azureFunctions.projectLanguage": "Python",
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 2,
-    "azureFunctions.projectSubpath": "backend/api/getcount"
+    "azureFunctions.projectSubpath": "backend/api/"
 }

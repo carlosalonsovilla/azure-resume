@@ -1,0 +1,38 @@
+name: Deploy Frontend to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy storage account and static website
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: my-resume-rg
+          template: ./arm-templates/storage-frontend.json
+          parameters: |
+            storageAccountName=${{ secrets.STORAGE_ACCOUNT_NAME }}
+
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+      - name: Purge CDN endpoint
+        run: |
+          az cdn endpoint purge -g my-resume-rg \
+          --profile-name ${{ secrets.CDN_PROFILE_NAME }} \
+          --name ${{ secrets.CDN_ENDPOINT_NAME }} \
+          --content-paths '/*'

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account"
+      }
+    },
+    "cdnProfileName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the CDN profile"
+      }
+    },
+    "cdnEndpointName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the CDN endpoint"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2019-06-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "supportsHttpsTrafficOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Cdn/profiles",
+      "apiVersion": "2019-06-01",
+      "name": "[parameters('cdnProfileName')]",
+      "location": "Global",
+      "sku": {
+        "name": "Standard_Verizon" // Changed to reflect CDN Classic
+      }
+    },
+    {
+      "type": "Microsoft.Cdn/profiles/endpoints",
+      "apiVersion": "2019-06-01",
+      "name": "[concat(parameters('cdnProfileName'), '/', parameters('cdnEndpointName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Cdn/profiles', parameters('cdnProfileName'))]"
+      ],
+      "properties": {
+        "originHostHeader": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]",
+        "origins": [
+          {
+            "name": "storageorigin",
+            "properties": {
+              "hostName": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
